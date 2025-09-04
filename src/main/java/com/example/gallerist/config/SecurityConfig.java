@@ -41,6 +41,9 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**").permitAll() // Allow Swagger UI and API docs
+                        .requestMatchers("rest/api/address/save","rest/api/car/save").hasAnyRole("ADMIN", "GALLERIST", "CUSTOMER")
+                        .requestMatchers("rest/api/gallerist-car/save","rest/api/gallerist/save").hasAnyRole("ADMIN", "GALLERIST")
+                        .requestMatchers("rest/api/customer/save","rest/api/account/save","rest/api/saled-car/save").hasAnyRole("ADMIN", "CUSTOMER")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authEntryPoint) // Custom authentication entry point for handling unauthorized access

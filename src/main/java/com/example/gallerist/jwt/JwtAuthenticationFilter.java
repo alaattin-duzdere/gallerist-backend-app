@@ -9,13 +9,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -47,11 +50,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if(username!=null || SecurityContextHolder.getContext().getAuthentication()==null){
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 if (userDetails != null || jwtService.isTokenValid(token)) {
-                    UsernamePasswordAuthenticationToken authenticationToken =
-                            new UsernamePasswordAuthenticationToken(username, null, userDetails.getAuthorities());
+                    @SuppressWarnings("unchecked")
+                    List<String> roles = jwtService.exportToken(token, claims -> claims.get("authorities", List.class));
 
+                    List<SimpleGrantedAuthority> authorities = roles.stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .toList();
+
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                            new UsernamePasswordAuthenticationToken(username, null, authorities);
                     authenticationToken.setDetails(userDetails);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    logger.info("User has auu-thority(as local variable): " + authorities);
+                    logger.info("User has auu-thority: " + authenticationToken.getAuthorities());
                     logger.info("SecurityContextHolder updated with user: " + username);
                     logger.info("Authorization header:"+ header);
                     logger.info("SecurityContextHolder updated with authtoken: " + authenticationToken);

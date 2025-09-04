@@ -3,10 +3,7 @@ package com.example.gallerist.controller.impl;
 import com.example.gallerist.controller.IRestAuthenticationController;
 import com.example.gallerist.controller.RestBaseController;
 import com.example.gallerist.controller.RootEntity;
-import com.example.gallerist.dto.AuthRequest;
-import com.example.gallerist.dto.AuthResponse;
-import com.example.gallerist.dto.DtoUser;
-import com.example.gallerist.dto.RefreshTokenRequest;
+import com.example.gallerist.dto.*;
 import com.example.gallerist.service.IAuthenticationService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +23,7 @@ public class RestAuthenticationControllerImpl extends RestBaseController impleme
 
     @PostMapping("/register")
     @Override
-    public RootEntity<DtoUser> register(@Valid @RequestBody AuthRequest input){
+    public RootEntity<DtoUser> register(@Valid @RequestBody LoginRequest input){
         log.info("User has been reached controller: {}", input.getUsername());
         return ok(authenticationService.register(input));
     }

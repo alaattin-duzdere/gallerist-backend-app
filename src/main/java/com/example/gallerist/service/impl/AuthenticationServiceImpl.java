@@ -1,9 +1,7 @@
 package com.example.gallerist.service.impl;
 
-import com.example.gallerist.dto.AuthRequest;
-import com.example.gallerist.dto.AuthResponse;
-import com.example.gallerist.dto.DtoUser;
-import com.example.gallerist.dto.RefreshTokenRequest;
+import com.example.gallerist.dto.*;
+import com.example.gallerist.enums.Role;
 import com.example.gallerist.exceptions.BaseException;
 import com.example.gallerist.exceptions.ErrorMessage;
 import com.example.gallerist.exceptions.MessageType;
@@ -21,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,12 +42,14 @@ public class AuthenticationServiceImpl implements IAuthenticationService     {
     }
 
 
-    private User createUser(AuthRequest authRequest) {
+    private User createUser(LoginRequest loginRequest) {
         User user = new User();
         user.setCreateTime(new Date());
-        user.setUsername(authRequest.getUsername());
-        user.setPassword(passwordEncoder.encode(authRequest.getPassword()));
+        user.setUsername(loginRequest.getUsername());
+        user.setPassword(passwordEncoder.encode(loginRequest.getPassword()));
+        user.setRoles(loginRequest.getRoles());
         log.info("Creating user with username: {}", user.getUsername());
+        log.info("Creating user with roles: {}", user.getRoles());
         return user;
     }
 
@@ -62,10 +63,10 @@ public class AuthenticationServiceImpl implements IAuthenticationService     {
     }
 
     @Override
-    public DtoUser register(AuthRequest input) {
+    public DtoUser register(LoginRequest input) {
         User savedUser = userRepository.save(createUser(input)); // create and save the user
 
-        log.info("User {} has been registered", savedUser.getUsername());
+        log.info("User {} has been registered with roles: {}", savedUser.getUsername(), savedUser.getRoles() );
 
         DtoUser dtoUser = new DtoUser(); // convert User to DtoUser
         BeanUtils.copyProperties(savedUser, dtoUser);
