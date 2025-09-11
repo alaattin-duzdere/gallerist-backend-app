@@ -7,10 +7,7 @@ import com.example.gallerist.dto.DtoCustomer;
 import com.example.gallerist.dto.DtoCustomerIU;
 import com.example.gallerist.service.ICustomerService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/rest/api/customer")
@@ -26,5 +23,17 @@ public class RestCustomerControllerImpl extends RestBaseController implements IR
     @Override
     public RootEntity<DtoCustomer> saveCustomer(@Valid @RequestBody DtoCustomerIU dtoCustomerIU) {
         return ok(customerService.saveCustomer(dtoCustomerIU));
+    }
+
+    @GetMapping("/{id}")
+    @Override
+    public RootEntity<DtoCustomer> getCustomerById(@PathVariable Long id) {
+        return ok(customerService.getCustomerById(id));
+    }
+
+    @PutMapping("/update/{id}")
+    @Override
+    public RootEntity<DtoCustomer> updateCustomer(@PathVariable Long id,@RequestBody DtoCustomerIU dtoCustomerIU) {
+        return ok(customerService.updateCustomer(id, dtoCustomerIU));
     }
 }

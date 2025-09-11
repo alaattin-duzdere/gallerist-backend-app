@@ -72,4 +72,41 @@ public class CustomerServiceImpl implements ICustomerService {
 
         return dtoCustomer;
     }
+
+    @Override
+    public DtoCustomer getCustomerById(Long id) {
+        Customer customer = customerRepository.findById(id).orElseThrow(
+                () -> new BaseException(new ErrorMessage(MessageType.No_Record_Exist, "Account with id "+id+" does not exist"))
+        );
+
+        return getDtoCustomer(customer);
+    }
+
+    @Override
+    public DtoCustomer updateCustomer(Long id, DtoCustomerIU dtoCustomerIU) {
+        Customer customer = customerRepository.findById(id).orElseThrow(
+                () -> new BaseException(new ErrorMessage(MessageType.No_Record_Exist, "Account with id "+id+" does not exist"))
+        );
+        BeanUtils.copyProperties(dtoCustomerIU, customer, "id", "createTime");
+        customer.setAccount(accountRepository.findById(dtoCustomerIU.getAccountId()).orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.No_Record_Exist, "Account with id "+dtoCustomerIU.getAccountId()+" does not exist"))));
+        customer.setAdress(adressRepository.findById(dtoCustomerIU.getAdressId()).orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.No_Record_Exist, "Adress with id "+dtoCustomerIU.getAdressId()+" does not exist"))));
+        Customer savedCustomer = customerRepository.save(customer);
+        return getDtoCustomer(savedCustomer);
+    }
+
+    private DtoCustomer getDtoCustomer(Customer customer) {
+        DtoAccount dtoAccount = new DtoAccount();
+        BeanUtils.copyProperties(customer.getAccount(), dtoAccount);
+
+        DtoAdress dtoAdress = new DtoAdress();
+        BeanUtils.copyProperties(customer.getAdress(), dtoAdress);
+
+        DtoCustomer dtoCustomer = new DtoCustomer();
+        BeanUtils.copyProperties(customer, dtoCustomer);
+
+        dtoCustomer.setAccount(dtoAccount);
+        dtoCustomer.setAdress(dtoAdress);
+
+        return dtoCustomer;
+    }
 }
