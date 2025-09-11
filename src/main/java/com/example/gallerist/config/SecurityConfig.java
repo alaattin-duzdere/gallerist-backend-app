@@ -43,7 +43,7 @@ public class SecurityConfig {
                                 "/webjars/**").permitAll() // Allow Swagger UI and API docs
                         .requestMatchers("rest/api/address/**","rest/api/car/save").hasAnyRole("ADMIN", "GALLERIST", "CUSTOMER")
                         .requestMatchers("rest/api/gallerist-car/save","rest/api/gallerist/save").hasAnyRole("ADMIN", "GALLERIST")
-                        .requestMatchers("rest/api/customer/save","rest/api/account/save","rest/api/saled-car/save").hasAnyRole("ADMIN", "CUSTOMER")
+                        .requestMatchers("rest/api/customer/**","rest/api/account/**","rest/api/saled-car/**").hasAnyRole("ADMIN", "CUSTOMER")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authEntryPoint) // Custom authentication entry point for handling unauthorized access

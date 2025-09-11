@@ -6,4 +6,8 @@ import jakarta.persistence.criteria.Root;
 
 public interface IRestAccountController {
     public RootEntity<DtoAccount> saveAccount(DtoAccountIU dtoAccountIU);
+
+    public RootEntity<DtoAccount> getAccountById(Long id);
+
+    public RootEntity<DtoAccount> updateAccount(Long id, DtoAccountIU dtoAccountIU);
 }
