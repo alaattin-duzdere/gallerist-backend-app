@@ -2,13 +2,18 @@ package com.example.gallerist.service.impl;
 
 import com.example.gallerist.dto.DtoAccount;
 import com.example.gallerist.dto.DtoAccountIU;
+import com.example.gallerist.exceptions.BaseException;
+import com.example.gallerist.exceptions.ErrorMessage;
+import com.example.gallerist.exceptions.MessageType;
 import com.example.gallerist.model.Account;
 import com.example.gallerist.repository.AccountRepository;
 import com.example.gallerist.service.IAccountService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements IAccountService {
@@ -29,6 +34,31 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public DtoAccount saveAccount(DtoAccountIU dtoAccountIU) {
         Account savedAccount = accountRepository.save(createAccount(dtoAccountIU));
+        DtoAccount dtoAccount = new DtoAccount();
+        BeanUtils.copyProperties(savedAccount, dtoAccount);
+        return dtoAccount;
+    }
+
+    @Override
+    public DtoAccount getAdressById(Long id) {
+        Optional<Account> optAccount = accountRepository.findById(id);
+        if(optAccount.isEmpty()){
+            throw new BaseException(new ErrorMessage(MessageType.No_Record_Exist, "Account with id "+id+" does not exist"));
+        }
+        DtoAccount dtoAccount = new DtoAccount();
+
+        BeanUtils.copyProperties(optAccount.get(), dtoAccount);
+        return dtoAccount;
+    }
+
+    @Override
+    public DtoAccount updateAccount(Long id, DtoAccountIU dtoAccountIU) {
+        Account account = accountRepository.findById(id).orElseThrow(() ->
+                new BaseException(new ErrorMessage(MessageType.No_Record_Exist, "Account with id "+id+" does not exist"))
+        );
+        BeanUtils.copyProperties(createAccount(dtoAccountIU), account,"id", "createTime");
+        Account savedAccount = accountRepository.save(account);
+
         DtoAccount dtoAccount = new DtoAccount();
         BeanUtils.copyProperties(savedAccount, dtoAccount);
         return dtoAccount;

@@ -7,10 +7,7 @@ import com.example.gallerist.dto.DtoAccount;
 import com.example.gallerist.dto.DtoAccountIU;
 import com.example.gallerist.service.IAccountService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/rest/api/account")
@@ -26,5 +23,17 @@ public class RestAccountControllerImpl extends RestBaseController implements IRe
     @Override
     public RootEntity<DtoAccount> saveAccount(@Valid @RequestBody DtoAccountIU dtoAccountIU) {
         return ok(accountService.saveAccount(dtoAccountIU));
+    }
+
+    @GetMapping("/{id}")
+    @Override
+    public RootEntity<DtoAccount> getAccountById(@PathVariable Long id) {
+        return ok(accountService.getAdressById(id));
+    }
+
+    @PutMapping("/update/{id}")
+    @Override
+    public RootEntity<DtoAccount> updateAccount(@PathVariable Long id,@RequestBody DtoAccountIU dtoAccountIU) {
+        return ok(accountService.updateAccount(id, dtoAccountIU));
     }
 }
