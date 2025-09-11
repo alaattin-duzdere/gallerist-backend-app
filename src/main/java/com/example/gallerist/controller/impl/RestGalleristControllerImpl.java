@@ -7,10 +7,7 @@ import com.example.gallerist.dto.DtoGallerist;
 import com.example.gallerist.dto.DtoGalleristIU;
 import com.example.gallerist.service.IGalleristService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/rest/api/gallerist")
@@ -26,5 +23,17 @@ public class RestGalleristControllerImpl extends RestBaseController implements I
     @Override
     public RootEntity<DtoGallerist> saveGallerist(@Valid @RequestBody DtoGalleristIU dtoGalleristIU) {
         return ok(galleristService.saveGallerist(dtoGalleristIU));
+    }
+
+    @GetMapping("/{id}")
+    @Override
+    public RootEntity<DtoGallerist> getGalleristById(@PathVariable Long id) {
+        return ok(galleristService.getGalleristById(id));
+    }
+
+    @PutMapping("/update/{id}")
+    @Override
+    public RootEntity<DtoGallerist> updateGallerist(@PathVariable Long id,@RequestBody DtoGalleristIU dtoGalleristIU) {
+        return ok(galleristService.updateGallerist(id, dtoGalleristIU));
     }
 }

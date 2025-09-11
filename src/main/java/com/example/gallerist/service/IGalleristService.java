@@ -7,4 +7,8 @@ import com.example.gallerist.dto.DtoGalleristIU;
 public interface IGalleristService {
 
     public DtoGallerist saveGallerist(DtoGalleristIU dtoGalleristIU);
+
+    public DtoGallerist getGalleristById(Long id);
+
+    public DtoGallerist updateGallerist(Long id, DtoGalleristIU dtoGalleristIU);
 }
