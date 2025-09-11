@@ -41,8 +41,8 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**").permitAll() // Allow Swagger UI and API docs
-                        .requestMatchers("rest/api/address/**","rest/api/car/save").hasAnyRole("ADMIN", "GALLERIST", "CUSTOMER")
-                        .requestMatchers("rest/api/gallerist-car/save","rest/api/gallerist/save").hasAnyRole("ADMIN", "GALLERIST")
+                        .requestMatchers("rest/api/address/**","rest/api/car/**").hasAnyRole("ADMIN", "GALLERIST", "CUSTOMER")
+                        .requestMatchers("rest/api/gallerist-car/**","rest/api/gallerist/**").hasAnyRole("ADMIN", "GALLERIST")
                         .requestMatchers("rest/api/customer/**","rest/api/account/**","rest/api/saled-car/**").hasAnyRole("ADMIN", "CUSTOMER")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex

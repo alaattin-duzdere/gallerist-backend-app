@@ -54,4 +54,35 @@ public class GalleristserviceImpl implements IGalleristService {
 
         return dtoGallerist;
     }
+
+    @Override
+    public DtoGallerist getGalleristById(Long id) {
+        Gallerist gallerist = galleristRepository.findById(id).orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.No_Record_Exist, "Not found : " + id)));
+
+        DtoAdress dtoAdress = new DtoAdress();
+        BeanUtils.copyProperties(gallerist.getAddress(), dtoAdress);
+
+        DtoGallerist dtoGallerist = new DtoGallerist();
+        BeanUtils.copyProperties(gallerist, dtoGallerist);
+        dtoGallerist.setAdress(dtoAdress);
+
+        return dtoGallerist;
+    }
+
+    @Override
+    public DtoGallerist updateGallerist(Long id, DtoGalleristIU dtoGalleristIU) {
+        Gallerist gallerist = galleristRepository.findById(id).orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.No_Record_Exist, "Not found : " + id)));
+        BeanUtils.copyProperties(dtoGalleristIU,gallerist, "id", "createTime");
+        gallerist.setAddress(adressRepository.findById(dtoGalleristIU.getAdressId()).orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.No_Record_Exist, "Not found : " + dtoGalleristIU.getAdressId()))));
+        Gallerist savedGallerist = galleristRepository.save(gallerist);
+
+        DtoAdress dtoAdress = new DtoAdress();
+        BeanUtils.copyProperties(savedGallerist.getAddress(), dtoAdress);
+
+        DtoGallerist dtoGallerist = new DtoGallerist();
+        BeanUtils.copyProperties(savedGallerist, dtoGallerist);
+        dtoGallerist.setAdress(dtoAdress);
+
+        return dtoGallerist;
+    }
 }
