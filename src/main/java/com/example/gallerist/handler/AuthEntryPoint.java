@@ -15,8 +15,10 @@ import java.io.IOException;
 public class AuthEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        log.info("Unauthorized error: {}", authException.getMessage());
-        log.info("Unauthorized error: {}", authException.toString());
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+        log.warn("Unauthorized error: {}", authException.getMessage());
+        if (!response.isCommitted()) {
+            log.info("Into AuthEntryPoint");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"); // 401
+        }
     }
 }

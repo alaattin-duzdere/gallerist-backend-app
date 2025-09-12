@@ -2,6 +2,8 @@ package com.example.gallerist.config;
 
 import com.example.gallerist.handler.AuthEntryPoint;
 import com.example.gallerist.jwt.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -11,8 +13,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -24,10 +28,13 @@ public class SecurityConfig {
 
     private final AuthEntryPoint authEntryPoint;
 
-    public SecurityConfig(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter, AuthEntryPoint authEntryPoint) {
+    private final AccessDeniedHandler customAccesDeniedHandler;
+
+    public SecurityConfig(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter, AuthEntryPoint authEntryPoint,AccessDeniedHandler customAccesDeniedHandler1) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.authEntryPoint = authEntryPoint;
+        this.customAccesDeniedHandler = customAccesDeniedHandler1;
     }
 
     @Bean
@@ -46,7 +53,8 @@ public class SecurityConfig {
                         .requestMatchers("rest/api/customer/**","rest/api/account/**","rest/api/saled-car/**").hasAnyRole("ADMIN", "CUSTOMER")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(authEntryPoint) // Custom authentication entry point for handling unauthorized access
+                        .accessDeniedHandler(customAccesDeniedHandler) // Custom access denied handler for handling forbidden access (403)
+                        .authenticationEntryPoint(authEntryPoint) // Custom authentication entry point for handling unauthorized access (401)
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
