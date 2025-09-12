@@ -12,6 +12,7 @@ import com.example.gallerist.repository.GalleristCarRepository;
 import com.example.gallerist.repository.GalleristRepository;
 import com.example.gallerist.service.IGalleristCarService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -70,5 +71,40 @@ public class GalleristCarService implements IGalleristCarService {
         dtoGalleristCar.setCar(dtoCar);
 
         return dtoGalleristCar;
+    }
+
+    @Override
+    public DtoGalleristCar getGalleristCarById(Long id) {
+        GalleristCar galleristCar = galleristCarRepository.findById(id).orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.No_Record_Exist, id.toString())));
+
+        DtoAdress dtoAdress = new DtoAdress();
+        BeanUtils.copyProperties(galleristCar.getGallerist().getAddress(),dtoAdress);
+
+        DtoGallerist dtoGallerist = new DtoGallerist();
+        BeanUtils.copyProperties(galleristCar.getGallerist(),dtoGallerist);
+        dtoGallerist.setAdress(dtoAdress);
+
+        DtoCar dtoCar = new DtoCar();
+        BeanUtils.copyProperties(galleristCar.getCar(),dtoCar);
+
+        // create and return DtoGalleristCar
+        DtoGalleristCar dtoGalleristCar = new DtoGalleristCar();
+        BeanUtils.copyProperties(galleristCar,dtoGalleristCar);
+        dtoGalleristCar.setGallerist(dtoGallerist);
+        dtoGalleristCar.setCar(dtoCar);
+
+        return dtoGalleristCar;
+    }
+
+    @Override
+    public DtoGalleristCar updateGalleristCar(Long id, DtoGalleristCarIU dtoGalleristCarIU) {
+        GalleristCar galleristCar = galleristCarRepository.findById(id).orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.No_Record_Exist, id.toString())));
+
+        galleristCar.setCar(carRepository.findById(dtoGalleristCarIU.getCarId()).orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.No_Record_Exist,"No car exists: " + dtoGalleristCarIU.getCarId().toString()))));
+        galleristCar.setGallerist(galleristRepository.findById(dtoGalleristCarIU.getGalleristId()).orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.No_Record_Exist,"No gallerist exists: " + dtoGalleristCarIU.getGalleristId().toString()))));
+
+        GalleristCar savedGalleristcar = galleristCarRepository.save(galleristCar);
+
+        return getGalleristCarById(savedGalleristcar.getId());
     }
 }
