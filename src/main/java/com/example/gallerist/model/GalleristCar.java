@@ -18,7 +18,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GalleristCar extends BaseEntity{
+public class GalleristCar extends OwnableEntity{
 
     @ManyToOne
     private Gallerist gallerist;

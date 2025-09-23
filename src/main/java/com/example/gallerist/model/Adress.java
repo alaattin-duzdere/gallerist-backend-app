@@ -2,6 +2,7 @@ package com.example.gallerist.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -11,17 +12,17 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Adress extends BaseEntity{
+public class Adress extends OwnableEntity{
 
-    @Column(name= "city")
+    //@Column(name= "city")
     private String city;
 
-    @Column(name = "district")
+    //@Column(name = "district")
     private String district;
 
-    @Column(name = "neighborhood")
+    //@Column(name = "neighborhood")
     private String neighborhood;
 
-    @Column(name = "street")
+    //@Column(name = "street")
     private String street;
 }

@@ -19,4 +19,5 @@ public class BaseEntity {
     @Column(name = "create_time")
     @DateTimeFormat(iso =  DateTimeFormat.ISO.DATE_TIME)
     private Date createTime;
+
 }

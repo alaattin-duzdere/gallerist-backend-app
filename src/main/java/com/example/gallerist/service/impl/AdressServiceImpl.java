@@ -8,8 +8,10 @@ import com.example.gallerist.exceptions.MessageType;
 import com.example.gallerist.model.Adress;
 import com.example.gallerist.repository.AdressRepository;
 import com.example.gallerist.service.IAdressService;
+import com.example.gallerist.utils.CustomPermissionEvaluator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -19,10 +21,14 @@ import java.util.Optional;
 @Service
 public class AdressServiceImpl implements IAdressService {
 
+    private final CustomPermissionEvaluator customPermissionEvaluator;
+
     private final AdressRepository adressRepository;
 
-    public AdressServiceImpl(AdressRepository adressRepository) {
+    public AdressServiceImpl(CustomPermissionEvaluator customPermissionEvaluator, AdressRepository adressRepository) {
+        this.customPermissionEvaluator = customPermissionEvaluator;
         this.adressRepository = adressRepository;
+        this.customPermissionEvaluator.setRepository(Adress.class);
     }
 
     public Adress createAdress(DtoAdressIU dtoAdressIU){
@@ -42,6 +48,7 @@ public class AdressServiceImpl implements IAdressService {
         return dtoAdress;
     }
 
+    @PreAuthorize("hasPermission(#id, 'Adress', 'read')")
     @Override
     public DtoAdress getAdressById(Long id) {
         Optional<Adress> optAdress = adressRepository.findById(id);
@@ -53,6 +60,7 @@ public class AdressServiceImpl implements IAdressService {
         return dtoAdress;
     }
 
+    @PreAuthorize("hasPermission(#id, 'Adress', 'write')")
     @Override
     public DtoAdress updateAdress(Long id, DtoAdressIU dtoAdressIU) {
         Optional<Adress> optAdress = adressRepository.findById(id);

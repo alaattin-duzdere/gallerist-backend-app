@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Car extends BaseEntity{
+public class Car extends OwnableEntity{
 
     @Column(name = "plaka")
     private String plaka;

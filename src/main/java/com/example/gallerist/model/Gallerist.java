@@ -17,7 +17,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Gallerist  extends BaseEntity{
+public class Gallerist  extends OwnableEntity{
 
     @Column(name = "first_name")
     private String firstName;
@@ -27,6 +27,4 @@ public class Gallerist  extends BaseEntity{
 
     @OneToOne
     private Adress address;
-
-
 }

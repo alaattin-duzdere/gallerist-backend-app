@@ -8,8 +8,10 @@ import com.example.gallerist.exceptions.MessageType;
 import com.example.gallerist.model.Account;
 import com.example.gallerist.repository.AccountRepository;
 import com.example.gallerist.service.IAccountService;
+import com.example.gallerist.utils.CustomPermissionEvaluator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,8 +22,12 @@ public class AccountServiceImpl implements IAccountService {
 
     private final AccountRepository accountRepository;
 
-    public AccountServiceImpl(AccountRepository accountRepository) {
+    private final CustomPermissionEvaluator customPermissionEvaluator;
+
+    public AccountServiceImpl(AccountRepository accountRepository, CustomPermissionEvaluator customPermissionEvaluator) {
         this.accountRepository = accountRepository;
+        this.customPermissionEvaluator = customPermissionEvaluator;
+        this.customPermissionEvaluator.setRepository(Account.class);
     }
 
     private Account createAccount(DtoAccountIU dtoAccountIU) {
@@ -39,6 +45,7 @@ public class AccountServiceImpl implements IAccountService {
         return dtoAccount;
     }
 
+    @PreAuthorize("hasPermission(#id, 'Account', 'read')")
     @Override
     public DtoAccount getAdressById(Long id) {
         Optional<Account> optAccount = accountRepository.findById(id);
@@ -51,6 +58,7 @@ public class AccountServiceImpl implements IAccountService {
         return dtoAccount;
     }
 
+    @PreAuthorize("hasPermission(#id, 'Account', 'write')")
     @Override
     public DtoAccount updateAccount(Long id, DtoAccountIU dtoAccountIU) {
         Account account = accountRepository.findById(id).orElseThrow(() ->
